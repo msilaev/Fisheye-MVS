@@ -10,7 +10,7 @@ This repository implements a **Unik3D → Multiview geometry** pipeline, providi
 
 | Source images | Combined 3D point cloud, Estimated camera pose  |
 |:------:|:----------:|
-| <img src="assets/Apartment_release_clean_seq133_M1292/image0.jpg" width="150"/> <img src="assets/Apartment_release_clean_seq133_M1292/image1.jpg" width="150"/> | <img src="assets/Apartment_release_clean_seq133_M1292/rotation_est.gif" width="600"/> |
+| <img src="assets/Apartment_release_clean_seq133_M1292/image0.jpg" width="170"/><br><img src="assets/Apartment_release_clean_seq133_M1292/image1.jpg" width="170"/> | <img src="assets/Apartment_release_clean_seq133_M1292/rotation_est.gif" width="600"/> |
 
 ---
 
@@ -20,6 +20,6 @@ This repository implements a **Unik3D → Multiview geometry** pipeline, providi
 
 | Source images | Combined 3D point cloud, Estimated camera pose  |
 |:------:|:----------:|
-| <img src="assets/Apartment_release_multiuser_cook_seq141_M1292_1/image0.jpg" width="150"/> <img src="assets/Apartment_release_multiuser_cook_seq141_M1292_1/image1.jpg" width="150"/> | <img src="assets/Apartment_release_multiuser_cook_seq141_M1292_1/rotation_est.gif" width="600"/> |
+| <img src="assets/Apartment_release_multiuser_cook_seq141_M1292_1/image0.jpg" width="150"/><br><img src="assets/Apartment_release_multiuser_cook_seq141_M1292_1/image1.jpg" width="150"/> | <img src="assets/Apartment_release_multiuser_cook_seq141_M1292_1/rotation_est.gif" width="600"/> |
 
 ---
