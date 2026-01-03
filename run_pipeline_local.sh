@@ -67,9 +67,6 @@ rsync -avz "$LOCAL_SCRIPT_DIR_superglue/" \
 rsync -avz "$LOCAL_SCRIPT_DIR_procrustes/" \
     "$REMOTE_USER@$REMOTE_HOST:$REMOTE_SCRIPT_DIR_procrustes/"
 
-rsync -avz "$LOCAL_DATA_DIR/" \
-    "$REMOTE_USER@$REMOTE_HOST:$REMOTE_DATA_DIR/"
-
 rsync -avz "$LOCAL_SCRIPT_DIR/run_pipeline_remote.sh" \
     "$REMOTE_USER@$REMOTE_HOST:$REMOTE_SCRIPT_DIR/run_pipeline_remote.sh"
 
