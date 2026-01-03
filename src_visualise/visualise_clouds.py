@@ -47,11 +47,11 @@ def get_mask(args):
     mask = mask.resize((1400, 1400), Image.NEAREST)  # NEAREST preserves binary edges
 
     mask = np.array(mask) / 255.0  # (H, W) or (H, W, 3)
-    print(f"mask shape = {mask.shape}")
+    #print(f"mask shape = {mask.shape}")
     mask = mask.transpose(2, 1, 0)
     mask = mask.reshape(3, -1).T
     mask = mask[:, 2]  # use any channel
-    print(f"Mask shape {mask.shape}, mask[0] {mask[0]}")
+    #print(f"Mask shape {mask.shape}, mask[0] {mask[0]}")
     mask = (mask > 0.5).astype(bool)  # threshold away black area
 
     return mask
