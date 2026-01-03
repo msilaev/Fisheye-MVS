@@ -70,29 +70,59 @@ def procrustes(data1, data2):
     return (mu1, norm1, mtx1), (mu2, norm2, mtx2), s*norm2/norm1, R, mu1
 
 
-def filter_mkpts(path_P, mkpts):
+def filter_mkpts(args, path_P, mkpts):
 
     P = np.load(path_P)
+
+    mask = get_mask_kitti(args)
+    mkpts_mask = []
+
+    for p in mkpts:
+        #print("p", p)
+        if mask[p[0], p[1]]:
+            mkpts_mask.append(p)
+
+    mkpts_mask = np.array(mkpts_mask)
 
     P_1 = P[0]
 
     P_1 = P_1.transpose(0,2,1)
 
-    #P_1 = P_1[:, mkpts_mask[:, 0], mkpts_mask[:, 1]]
-    P_1 = P_1[:, mkpts[:, 0], mkpts[:, 1]]
+    P_1 = P_1[:, mkpts_mask[:, 0], mkpts_mask[:, 1]]
+    #P_1 = P_1[:, mkpts[:, 0], mkpts[:, 1]]
 
     P_1 = P_1.reshape(3,-1).T
 
     return P_1
 
+def get_mask_kitti(args):
+
+    mask = Image.open(args.remote_fisheye_mask_path)
+    mask = mask.resize((1400, 1400), Image.NEAREST)  # NEAREST preserves binary edges
+
+    mask = np.array(mask) / 255.0  # (H, W) or (H, W, 3)
+    print(f"mask shape = {mask.shape}")
+    mask = mask.transpose(2, 1, 0)
+
+    print(f"mask shape = {mask.shape}")
+
+    #mask = mask.reshape(3, -1).T
+    mask = mask[2, :, :]  # use any channel
+    mask = (mask > 0.5).astype(bool)  # threshold away black area
+
+    print(f"Mask shape {mask.shape}, mask[0] {mask[0]}")
+
+    return mask
 
 def pose_est(args):
 
     mkpts1 = np.load(args.mkpts1)
     mkpts2 = np.load(args.mkpts2)
 
-    P1_filtered = filter_mkpts(args.point1, mkpts1)
-    P2_filtered = filter_mkpts( args.point2, mkpts2)
+    mkpts1, mkpts2 = get_filtered_mkpts(args, mkpts1, mkpts2)
+
+    P1_filtered = filter_mkpts(args, args.point1, mkpts1)
+    P2_filtered = filter_mkpts(args, args.point2, mkpts2)
 
     distances_P = []
     for p in P1_filtered:
@@ -106,6 +136,21 @@ def pose_est(args):
     t= scale * np.dot((- mu1), R.T) + mu2
 
     return R, t, scale
+
+def get_filtered_mkpts(args, mkpts1, mkpts2 ):
+
+    mask = get_mask_kitti(args)
+
+    valid = []
+    for i in range(len(mkpts1)):
+        p1 = mkpts1[i]
+        p2 = mkpts2[i]
+
+        if mask[p1[0], p1[1]] and mask[p2[0], p2[1]]:
+            valid.append(i)
+
+    return mkpts1[valid], mkpts2[valid]
+
 
 def main(args):  
 
@@ -128,6 +173,7 @@ if __name__ == "__main__":
     
     parser.add_argument("--distance_threshold", type=float)
     parser.add_argument("--remote_transform_result_path", type=str, required=True)
+    parser.add_argument("--remote_fisheye_mask_path", type=str, required=True)
 
     main(parser.parse_args())
 

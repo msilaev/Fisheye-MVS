@@ -10,8 +10,9 @@ REMOTE_IMAGE_DIR="$5"
 REMOTE_RESULTS_DIR="$6"
 REMOTE_SUPER_GLUE_DIR="$7"
 REMOTE_UNIK3D_DIR="$8"
-remote_transform_result_path="${9}"
-DISTANCE_THRESHOLD="${10}"
+remote_fisheye_mask_path="$9"
+remote_transform_result_path="${10}"
+DISTANCE_THRESHOLD="${11}"
 
 CONDA_SETUP="/home/mikhail/miniconda3/etc/profile.d/conda.sh"
 
@@ -59,6 +60,7 @@ echo procrustes
   "$REMOTE_SCRIPT_DIR_procrustes" \
   "$REMOTE_IMAGE_DIR" \
   "$REMOTE_RESULTS_DIR" \
+  "$remote_fisheye_mask_path" \
   "$remote_transform_result_path" \
   "$DISTANCE_THRESHOLD" \
   > "$REMOTE_LOG_DIR/remote_pipeline_procrustes.log" 2>&1

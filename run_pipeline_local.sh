@@ -21,10 +21,15 @@ EXPERIMENT_NAME="KITTI-360"
 IMAGE_DIR="IMAGES_DIR_experiment_1"
 
 REMOTE_LOG_DIR="${REMOTE_DIR_ROOT}/${EXPERIMENT_NAME}/log_metrics"
-remote_transform_result_path="${REMOTE_DIR_ROOT}/${EXPERIMENT_NAME}/transform_result.json"
 REMOTE_RESULTS_DIR="${REMOTE_DIR_ROOT}/${EXPERIMENT_NAME}/results"
+remote_transform_result_path="${REMOTE_RESULTS_DIR}/transform_result.json"
+
 
 REMOTE_IMAGE_DIR="${REMOTE_DIR_ROOT}/${EXPERIMENT_NAME}/${IMAGE_DIR}"
+
+
+REMOTE_FISHEYE_MASK_DIR="${REMOTE_DIR_ROOT}/fisheye_masks"
+remote_fisheye_mask_path="${REMOTE_FISHEYE_MASK_DIR}/MaskKitti360.png"
 
 
 REMOTE_SCRIPT_DIR="${REMOTE_DIR_ROOT}/src_remote"
@@ -35,6 +40,7 @@ REMOTE_SUPER_GLUE_DIR="/home/hdd/mikhail/GAUSSIAN-SPLATTING/SuperGluePretrainedN
 REMOTE_UNIK3D_DIR="/home/hdd/mikhail/GAUSSIAN-SPLATTING/MVF-UniK3D"
 
 
+
 LOCAL_ROOT="/worktmp/THESES/GAUSSIAN-SPLATTING/"
 LOCAL_SCRIPT_DIR="${LOCAL_ROOT}/Fisheye-MVS/"
 LOCAL_SCRIPT_DIR_unik3d="${LOCAL_ROOT}/Fisheye-MVS/src_unik3d/"
@@ -43,6 +49,9 @@ LOCAL_SCRIPT_DIR_procrustes="${LOCAL_ROOT}/Fisheye-MVS/src_procrustes/"
 
 LOCAL_IMAGE_DIR="${LOCAL_ROOT}/experiments/${EXPERIMENT_NAME}/${IMAGE_DIR}"
 
+REMOTE_FISHEYE_MASK_DIR="${REMOTE_DIR_ROOT}/fisheye_masks"
+LOCAL_FISHEYE_MASK_DIR="${LOCAL_SCRIPT_DIR}/assets/fisheye_masks"
+
 ssh "$REMOTE_USER@$REMOTE_HOST" "
     mkdir -p \
         '$REMOTE_LOG_DIR' \
@@ -50,8 +59,12 @@ ssh "$REMOTE_USER@$REMOTE_HOST" "
         '$REMOTE_SCRIPT_DIR_superglue' \
         '$REMOTE_SCRIPT_DIR_procrustes' \
         '$REMOTE_IMAGE_DIR' \
-        '$REMOTE_RESULTS_DIR'
+        '$REMOTE_RESULTS_DIR' \
+        '$REMOTE_FISHEYE_MASK_DIR'
 "
+
+rsync -avz "$LOCAL_FISHEYE_MASK_DIR/" \
+    "$REMOTE_USER@$REMOTE_HOST:$REMOTE_FISHEYE_MASK_DIR/"
 
 rsync -avz "$LOCAL_SCRIPT_DIR_unik3d/" \
     "$REMOTE_USER@$REMOTE_HOST:$REMOTE_SCRIPT_DIR_unik3d/"
@@ -66,7 +79,7 @@ rsync -avz "$LOCAL_SCRIPT_DIR/run_pipeline_remote.sh" \
     "$REMOTE_USER@$REMOTE_HOST:$REMOTE_SCRIPT_DIR/run_pipeline_remote.sh"
 
 rsync -avz "$LOCAL_IMAGE_DIR/" \
-    "$REMOTE_USER@$REMOTE_HOST:$REMOTE_IMAGE_DIR/"    
+    "$REMOTE_USER@$REMOTE_HOST:$REMOTE_IMAGE_DIR/"
 
 ssh "$REMOTE_USER@$REMOTE_HOST" \
   "nohup bash '$REMOTE_SCRIPT_DIR/run_pipeline_remote.sh' \
@@ -78,6 +91,7 @@ ssh "$REMOTE_USER@$REMOTE_HOST" \
   '$REMOTE_RESULTS_DIR' \
   '$REMOTE_SUPER_GLUE_DIR' \
   '$REMOTE_UNIK3D_DIR' \
+  '$remote_fisheye_mask_path' \
   '$remote_transform_result_path' \
   '$DISTANCE_THRESHOLD' \
   > '$REMOTE_LOG_DIR/run_pipeline_remote.log' 2>&1 &"

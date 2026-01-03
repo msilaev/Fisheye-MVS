@@ -8,8 +8,9 @@ REMOTE_SCRIPT_DIR_superglue="$3"
 REMOTE_SCRIPT_DIR_procrustes="$4"
 REMOTE_IMAGE_DIR="$5"
 REMOTE_RESULTS_DIR="$6"
-remote_transform_result_path="${7}"
-DISTANCE_THRESHOLD="${8}"
+remote_fisheye_mask_path="$7"
+remote_transform_result_path="$8"
+DISTANCE_THRESHOLD="$9"
 
 CONDA_SETUP="/home/mikhail/miniconda3/etc/profile.d/conda.sh"
 if [ -f "$CONDA_SETUP" ]; then
@@ -36,6 +37,7 @@ python pose_estimation_procrustes.py \
     --mkpts2 "${LOCAL_RESULTS_DIR}/mkpts2.npy" \
     --img1 "${LOCAL_IMAGE_DIR}/image0.png" \
     --img2 "${LOCAL_IMAGE_DIR}/image1.png" \
+    --remote_fisheye_mask_path "${remote_fisheye_mask_path}" \
     --remote_transform_result_path "${remote_transform_result_path}" \
     --distance_threshold $DISTANCE_THRESHOLD \
     > "$REMOTE_LOG_DIR/pose_estimation.log" 2>&1
