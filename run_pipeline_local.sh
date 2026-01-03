@@ -15,7 +15,7 @@ if [ -z "$REMOTE_USER" ] || [ -z "$REMOTE_HOST" ]; then
     exit 1
 fi
 
-DISTANCE_THRESHOLD=50
+DISTANCE_THRESHOLD=20
 REMOTE_DIR_ROOT="/home/hdd/mikhail/GAUSSIAN-SPLATTING/experiments"
 EXPERIMENT_NAME="KITTI-360"
 IMAGE_DIR="IMAGES_DIR_experiment_1"
