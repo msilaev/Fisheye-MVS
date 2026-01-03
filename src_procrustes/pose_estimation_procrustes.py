@@ -98,7 +98,7 @@ def filter_mkpts(args, path_P, mkpts):
 def get_mask_kitti(args):
 
     mask = Image.open(args.remote_fisheye_mask_path)
-    mask = mask.resize((1400, 1400), Image.NEAREST)  # NEAREST preserves binary edges
+    mask = mask.resize((args.size_x, args.size_y), Image.NEAREST)  # NEAREST preserves binary edges
 
     mask = np.array(mask) / 255.0  # (H, W) or (H, W, 3)
     print(f"mask shape = {mask.shape}")
@@ -168,12 +168,11 @@ if __name__ == "__main__":
     parser.add_argument("--mkpts1", type=str, required=True, help="1")
     parser.add_argument("--mkpts2", type=str, required=True, help="2")
 
-    parser.add_argument("--img1", type=str, required=True, help="1")
-    parser.add_argument("--img2", type=str, required=True, help="2")
-    
     parser.add_argument("--distance_threshold", type=float)
     parser.add_argument("--remote_transform_result_path", type=str, required=True)
     parser.add_argument("--remote_fisheye_mask_path", type=str, required=True)
+    parser.add_argument("--size_x", type=int, required=True)
+    parser.add_argument("--size_y", type=int, required=True)
 
     main(parser.parse_args())
 

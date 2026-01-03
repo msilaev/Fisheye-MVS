@@ -11,6 +11,8 @@ REMOTE_RESULTS_DIR="$6"
 remote_fisheye_mask_path="$7"
 remote_transform_result_path="$8"
 DISTANCE_THRESHOLD="$9"
+SIZE_X="${10}"
+SIZE_Y="${11}"
 
 CONDA_SETUP="/home/mikhail/miniconda3/etc/profile.d/conda.sh"
 if [ -f "$CONDA_SETUP" ]; then
@@ -35,9 +37,9 @@ python pose_estimation_procrustes.py \
     --point2 "${LOCAL_RESULTS_DIR}/image1_points.npy" \
     --mkpts1 "${LOCAL_RESULTS_DIR}/mkpts1.npy" \
     --mkpts2 "${LOCAL_RESULTS_DIR}/mkpts2.npy" \
-    --img1 "${LOCAL_IMAGE_DIR}/image0.png" \
-    --img2 "${LOCAL_IMAGE_DIR}/image1.png" \
     --remote_fisheye_mask_path "${remote_fisheye_mask_path}" \
     --remote_transform_result_path "${remote_transform_result_path}" \
     --distance_threshold $DISTANCE_THRESHOLD \
+    --size_x $SIZE_X \
+    --size_y $SIZE_Y \
     > "$REMOTE_LOG_DIR/pose_estimation.log" 2>&1

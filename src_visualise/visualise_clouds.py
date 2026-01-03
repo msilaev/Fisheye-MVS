@@ -16,7 +16,7 @@ SIZE_Y=2078
 
 def get_pose(args):
 
-    with open(args.remote_transform_result_path, "r") as f:
+    with open(args.local_transform_result_path, "r") as f:
         pose = json.load(f)
 
     R_est = np.array(pose["R_est"])
@@ -44,7 +44,7 @@ def load_unik3d_cloud(path):
 def get_mask(args):
 
     mask = Image.open(args.mask_fisheye)
-    mask = mask.resize((1400, 1400), Image.NEAREST)  # NEAREST preserves binary edges
+    mask = mask.resize((args.size_x, args.size_y), Image.NEAREST)  # NEAREST preserves binary edges
 
     mask = np.array(mask) / 255.0  # (H, W) or (H, W, 3)
     #print(f"mask shape = {mask.shape}")
@@ -138,11 +138,15 @@ if __name__ == "__main__":
     parser.add_argument("--img2", type=str, required=True, help="2")
 
 
-    parser.add_argument("--point_size", type=float, default=2.0)
+    parser.add_argument("--point_size", type=float, default=1.0)
 
     parser.add_argument("--mask_fisheye", type=str)
 
     parser.add_argument("--distance_threshold_plt", type=float)
+    parser.add_argument("--local_transform_result_path", type=str, required=True)
+    parser.add_argument("--size_x", type=int, required=True)
+    parser.add_argument("--size_y", type=int, required=True)
+
 
     main(parser.parse_args())
 

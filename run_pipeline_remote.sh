@@ -13,6 +13,8 @@ REMOTE_UNIK3D_DIR="$8"
 remote_fisheye_mask_path="$9"
 remote_transform_result_path="${10}"
 DISTANCE_THRESHOLD="${11}"
+SIZE_X="${12}"
+SIZE_Y="${13}"
 
 CONDA_SETUP="/home/mikhail/miniconda3/etc/profile.d/conda.sh"
 
@@ -48,6 +50,8 @@ echo superglue
   "$REMOTE_IMAGE_DIR" \
   "$REMOTE_RESULTS_DIR" \
   "$REMOTE_SUPER_GLUE_DIR" \
+  "$SIZE_X" \
+  "$SIZE_Y" \
   > "$REMOTE_LOG_DIR/remote_pipeline_superglue.log" 2>&1
 
 # Run visualise script
@@ -63,4 +67,6 @@ echo procrustes
   "$remote_fisheye_mask_path" \
   "$remote_transform_result_path" \
   "$DISTANCE_THRESHOLD" \
+  "$SIZE_X" \
+  "$SIZE_Y" \
   > "$REMOTE_LOG_DIR/remote_pipeline_procrustes.log" 2>&1

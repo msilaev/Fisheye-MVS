@@ -15,23 +15,29 @@ if [ -z "$REMOTE_USER" ] || [ -z "$REMOTE_HOST" ]; then
     exit 1
 fi
 
-DISTANCE_THRESHOLD=20
 REMOTE_DIR_ROOT="/home/hdd/mikhail/GAUSSIAN-SPLATTING/experiments"
+
+DISTANCE_THRESHOLD=20
 EXPERIMENT_NAME="KITTI-360"
 IMAGE_DIR="IMAGES_DIR_experiment_1"
+REMOTE_FISHEYE_MASK_DIR="${REMOTE_DIR_ROOT}/fisheye_masks"
+remote_fisheye_mask_path="${REMOTE_FISHEYE_MASK_DIR}/MaskKitti360.png"
+SIZE_X=1400
+SIZE_Y=1400
+
+#DISTANCE_THRESHOLD=1000
+#EXPERIMENT_NAME="ADT"
+#IMAGE_DIR="IMAGES_DIR_experiment_1"
+#REMOTE_FISHEYE_MASK_DIR="${REMOTE_DIR_ROOT}/fisheye_masks"
+#remote_fisheye_mask_path="${REMOTE_FISHEYE_MASK_DIR}/MaskADT_rot.png"
+#SIZE_X=1408
+#SIZE_Y=1408
 
 REMOTE_LOG_DIR="${REMOTE_DIR_ROOT}/${EXPERIMENT_NAME}/log_metrics"
 REMOTE_RESULTS_DIR="${REMOTE_DIR_ROOT}/${EXPERIMENT_NAME}/results"
 remote_transform_result_path="${REMOTE_RESULTS_DIR}/transform_result.json"
 
-
 REMOTE_IMAGE_DIR="${REMOTE_DIR_ROOT}/${EXPERIMENT_NAME}/${IMAGE_DIR}"
-
-
-REMOTE_FISHEYE_MASK_DIR="${REMOTE_DIR_ROOT}/fisheye_masks"
-remote_fisheye_mask_path="${REMOTE_FISHEYE_MASK_DIR}/MaskKitti360.png"
-
-
 REMOTE_SCRIPT_DIR="${REMOTE_DIR_ROOT}/src_remote"
 REMOTE_SCRIPT_DIR_unik3d="${REMOTE_DIR_ROOT}/src_remote"
 REMOTE_SCRIPT_DIR_superglue="${REMOTE_DIR_ROOT}/src_remote"
@@ -94,6 +100,8 @@ ssh "$REMOTE_USER@$REMOTE_HOST" \
   '$remote_fisheye_mask_path' \
   '$remote_transform_result_path' \
   '$DISTANCE_THRESHOLD' \
+  '$SIZE_X' \
+  '$SIZE_Y' \
   > '$REMOTE_LOG_DIR/run_pipeline_remote.log' 2>&1 &"
 
 echo "[LOCAL] Pipeline started on remote host."
