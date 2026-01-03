@@ -41,7 +41,7 @@ LOCAL_SCRIPT_DIR_unik3d="${LOCAL_ROOT}/Fisheye-MVS/src_unik3d/"
 LOCAL_SCRIPT_DIR_superglue="${LOCAL_ROOT}/Fisheye-MVS/src_superglue/"
 LOCAL_SCRIPT_DIR_procrustes="${LOCAL_ROOT}/Fisheye-MVS/src_procrustes/"
 
-LOCAL_IMAGE_DIR="${LOCAL_ROOT}/${EXPERIMENT_NAME}/${IMAGE_DIR}"
+LOCAL_IMAGE_DIR="${LOCAL_ROOT}/experiments/${EXPERIMENT_NAME}/${IMAGE_DIR}"
 
 ssh "$REMOTE_USER@$REMOTE_HOST" "
     mkdir -p \
