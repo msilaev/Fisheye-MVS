@@ -35,8 +35,7 @@ LOCAL_RESULTS_DIR="${LOCAL_ROOT}/experiments/${EXPERIMENT_NAME}/results"
 local_transform_result_path="${LOCAL_RESULTS_DIR}/transform_result.json"
 
 
-scp "$REMOTE_USER@$REMOTE_HOST:$REMOTE_RESULTS_DIR/" "$LOCAL_RESULTS_DIR"
-
+scp -r "$REMOTE_USER@$REMOTE_HOST:$REMOTE_RESULTS_DIR" "$LOCAL_RESULTS_DIR"
 
 cd "$LOCAL_SCRIPT_DIR_visualise"
 python visualise_clouds.py \
