@@ -12,12 +12,6 @@ REMOTE_SUPER_GLUE_DIR="$7"
 SIZE_X="$8"
 SIZE_Y="$9"
 
-#SIZE_X=1408
-#SIZE_Y=1408
-
-#SIZE_X=1400
-#SIZE_Y=1400
-
 image_pair_file="${REMOTE_IMAGE_DIR}/image_pairs.txt"
 image_input_dir="${REMOTE_IMAGE_DIR}"
 

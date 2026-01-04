@@ -1,23 +1,24 @@
 import argparse
-from scipy.linalg import orthogonal_procrustes
-import numpy as np
-import os
 import json
+
+import numpy as np
 from PIL import Image
-from utils import compute_pose_error
+from scipy.linalg import orthogonal_procrustes
+
+
 
 def save_pose(args, t_est, R_est, scale_est):
-
-    pose={}
-
-    pose["scale_est"] = float(scale_est)
-    pose["R_est"] = R_est.tolist()
-    pose["t_est"] = t_est.tolist()
+    pose = {
+        "scale_est": float(scale_est),
+        "R_est": R_est.tolist(),
+        "t_est": t_est.tolist(),
+    }
 
     with open(args.remote_transform_result_path, "w") as f:
         json.dump(pose, f, indent=2)
-    
+
     print(f"updated test json to {args.remote_transform_result_path}")
+
 
 
 def load_unik3d_cloud(path):
@@ -28,14 +29,15 @@ def load_unik3d_cloud(path):
     if P.ndim != 4 or P.shape[0] != 1 or P.shape[1] != 3:
         raise ValueError(f"Invalid shape {P.shape}, expected (1,3,H,W)")
 
-    P = P[0]                     # (3,H,W)
-    P = P.transpose(0,2,1)
-    P = P.reshape(3, -1).T       # → (H*W, 3)
+    P = P[0]  # (3,H,W)
+    P = P.transpose(0, 2, 1)
+    P = P.reshape(3, -1).T  # -> (H*W, 3)
 
     return P
 
-def procrustes(data1, data2):
 
+
+def procrustes(data1, data2):
     mtx1 = np.array(data1, dtype=np.float64, copy=True)
     mtx2 = np.array(data2, dtype=np.float64, copy=True)
 
@@ -67,18 +69,23 @@ def procrustes(data1, data2):
     R, s = orthogonal_procrustes(mtx2, mtx1)
     mtx1 = np.dot(mtx1, R.T) * s
 
-    return (mu1, norm1, mtx1), (mu2, norm2, mtx2), s*norm2/norm1, R, mu1
+    return (
+        (mu1, norm1, mtx1),
+        (mu2, norm2, mtx2),
+        s * norm2 / norm1,
+        R,
+        mu1,
+    )
+
 
 
 def filter_mkpts(args, path_P, mkpts):
-
     P = np.load(path_P)
 
     mask = get_mask_kitti(args)
     mkpts_mask = []
 
     for p in mkpts:
-        #print("p", p)
         if mask[p[0], p[1]]:
             mkpts_mask.append(p)
 
@@ -86,19 +93,20 @@ def filter_mkpts(args, path_P, mkpts):
 
     P_1 = P[0]
 
-    P_1 = P_1.transpose(0,2,1)
+    P_1 = P_1.transpose(0, 2, 1)
 
     P_1 = P_1[:, mkpts_mask[:, 0], mkpts_mask[:, 1]]
-    #P_1 = P_1[:, mkpts[:, 0], mkpts[:, 1]]
 
-    P_1 = P_1.reshape(3,-1).T
+    P_1 = P_1.reshape(3, -1).T
 
     return P_1
 
-def get_mask_kitti(args):
 
+
+def get_mask_kitti(args):
     mask = Image.open(args.remote_fisheye_mask_path)
-    mask = mask.resize((args.size_x, args.size_y), Image.NEAREST)  # NEAREST preserves binary edges
+    # NEAREST preserves binary edges
+    mask = mask.resize((args.size_x, args.size_y), Image.NEAREST)
 
     mask = np.array(mask) / 255.0  # (H, W) or (H, W, 3)
     print(f"mask shape = {mask.shape}")
@@ -106,7 +114,6 @@ def get_mask_kitti(args):
 
     print(f"mask shape = {mask.shape}")
 
-    #mask = mask.reshape(3, -1).T
     mask = mask[2, :, :]  # use any channel
     mask = (mask > 0.5).astype(bool)  # threshold away black area
 
@@ -114,8 +121,9 @@ def get_mask_kitti(args):
 
     return mask
 
-def pose_est(args):
 
+
+def pose_est(args):
     mkpts1 = np.load(args.mkpts1)
     mkpts2 = np.load(args.mkpts2)
 
@@ -132,13 +140,17 @@ def pose_est(args):
     P1_filtered = P1_filtered[distances_P < args.distance_threshold]
     P2_filtered = P2_filtered[distances_P < args.distance_threshold]
 
-    (mu1, norm1, mtx1), (mu2, norm2, mtx2), scale, R, _ = procrustes(P1_filtered, P2_filtered)
-    t= scale * np.dot((- mu1), R.T) + mu2
+    (mu1, norm1, mtx1), (mu2, norm2, mtx2), scale, R, _ = procrustes(
+        P1_filtered,
+        P2_filtered,
+    )
+    t = scale * np.dot(-mu1, R.T) + mu2
 
     return R, t, scale
 
-def get_filtered_mkpts(args, mkpts1, mkpts2 ):
 
+
+def get_filtered_mkpts(args, mkpts1, mkpts2):
     mask = get_mask_kitti(args)
 
     valid = []
@@ -152,8 +164,8 @@ def get_filtered_mkpts(args, mkpts1, mkpts2 ):
     return mkpts1[valid], mkpts2[valid]
 
 
-def main(args):  
 
+def main(args):
     R_est, t_est, scale_est = pose_est(args)
 
     save_pose(args, t_est, R_est, scale_est)
@@ -162,15 +174,33 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--point1", type=str, required=True, help="Unik3D .npy point cloud 1")
-    parser.add_argument("--point2", type=str, required=True, help="Unik3D .npy point cloud 2")
+    parser.add_argument(
+        "--point1",
+        type=str,
+        required=True,
+        help="Unik3D .npy point cloud 1",
+    )
+    parser.add_argument(
+        "--point2",
+        type=str,
+        required=True,
+        help="Unik3D .npy point cloud 2",
+    )
 
     parser.add_argument("--mkpts1", type=str, required=True, help="1")
     parser.add_argument("--mkpts2", type=str, required=True, help="2")
 
     parser.add_argument("--distance_threshold", type=float)
-    parser.add_argument("--remote_transform_result_path", type=str, required=True)
-    parser.add_argument("--remote_fisheye_mask_path", type=str, required=True)
+    parser.add_argument(
+        "--remote_transform_result_path",
+        type=str,
+        required=True,
+    )
+    parser.add_argument(
+        "--remote_fisheye_mask_path",
+        type=str,
+        required=True,
+    )
     parser.add_argument("--size_x", type=int, required=True)
     parser.add_argument("--size_y", type=int, required=True)
 

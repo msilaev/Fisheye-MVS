@@ -22,7 +22,7 @@ else
 fi
 
 conda deactivate || true
-conda activate mvf-unik3d
+conda activate 3d_pose_env
 
 echo "[REMOTE] Running Procrustes pose matching ..."
 

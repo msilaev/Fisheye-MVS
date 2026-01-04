@@ -15,12 +15,20 @@ if [ -z "$REMOTE_USER" ] || [ -z "$REMOTE_HOST" ]; then
     exit 1
 fi
 
+source path_config.sh
+source experiment_config_kitti.sh
+
 REMOTE_DIR_ROOT="/home/hdd/mikhail/GAUSSIAN-SPLATTING/experiments"
+REMOTE_SUPER_GLUE_DIR="/home/hdd/mikhail/GAUSSIAN-SPLATTING/SuperGluePretrainedNetwork"
+REMOTE_UNIK3D_DIR="/home/hdd/mikhail/GAUSSIAN-SPLATTING/MVF-UniK3D"
+LOCAL_ROOT="/worktmp/THESES/GAUSSIAN-SPLATTING/"
+
+REMOTE_FISHEYE_MASK_DIR="${REMOTE_DIR_ROOT}/fisheye_masks"
+
 
 DISTANCE_THRESHOLD=20
 EXPERIMENT_NAME="KITTI-360"
 IMAGE_DIR="IMAGES_DIR_experiment_1"
-REMOTE_FISHEYE_MASK_DIR="${REMOTE_DIR_ROOT}/fisheye_masks"
 remote_fisheye_mask_path="${REMOTE_FISHEYE_MASK_DIR}/MaskKitti360.png"
 SIZE_X=1400
 SIZE_Y=1400
@@ -28,7 +36,6 @@ SIZE_Y=1400
 #DISTANCE_THRESHOLD=1000
 #EXPERIMENT_NAME="ADT"
 #IMAGE_DIR="IMAGES_DIR_experiment_1"
-#REMOTE_FISHEYE_MASK_DIR="${REMOTE_DIR_ROOT}/fisheye_masks"
 #remote_fisheye_mask_path="${REMOTE_FISHEYE_MASK_DIR}/MaskADT_rot.png"
 #SIZE_X=1408
 #SIZE_Y=1408
@@ -42,12 +49,8 @@ REMOTE_SCRIPT_DIR="${REMOTE_DIR_ROOT}/src_remote"
 REMOTE_SCRIPT_DIR_unik3d="${REMOTE_DIR_ROOT}/src_remote"
 REMOTE_SCRIPT_DIR_superglue="${REMOTE_DIR_ROOT}/src_remote"
 REMOTE_SCRIPT_DIR_procrustes="${REMOTE_DIR_ROOT}/src_remote"
-REMOTE_SUPER_GLUE_DIR="/home/hdd/mikhail/GAUSSIAN-SPLATTING/SuperGluePretrainedNetwork"
-REMOTE_UNIK3D_DIR="/home/hdd/mikhail/GAUSSIAN-SPLATTING/MVF-UniK3D"
 
 
-
-LOCAL_ROOT="/worktmp/THESES/GAUSSIAN-SPLATTING/"
 LOCAL_SCRIPT_DIR="${LOCAL_ROOT}/Fisheye-MVS/"
 LOCAL_SCRIPT_DIR_unik3d="${LOCAL_ROOT}/Fisheye-MVS/src_unik3d/"
 LOCAL_SCRIPT_DIR_superglue="${LOCAL_ROOT}/Fisheye-MVS/src_superglue/"

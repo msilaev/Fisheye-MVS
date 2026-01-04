@@ -1,13 +1,5 @@
-"""Inference helper used by `slurm_inference_triton.sh`.
-
-Usage (from SLURM wrapper):
-  srun python scripts/triton_inference.py --config-file configs/train/vitb.json \
-      --data-source-dir /path/to/images --output-dir /path/to/out --images-output-dir /path/to/out/images
-"""
 import argparse
 import glob
-from html import parser
-import json
 import os
 from pathlib import Path
 
@@ -15,14 +7,8 @@ import numpy as np
 import torch
 from PIL import Image
 from matplotlib import colormaps as mpl_colormaps
-
 from unik3d.models import UniK3D
-
-import matplotlib.pyplot as plt
-from unik3d.utils.camera import (Pinhole, OPENCV, Fisheye624, MEI, Spherical)
-
 import huggingface_hub
-
 from safetensors.torch import load_file as _load_safetensors
 
 def load_model_from_config(cfg):
@@ -86,39 +72,6 @@ def colorize_depth(depth_np, cmap_name="inferno"):
     rgb = (rgba[..., :3] * 255).astype(np.uint8)
     return Image.fromarray(rgb)
 
-def instantiate_camera(camera_name, params, device):
-    if camera_name == "Predicted":
-        return None
-    fx, fy, cx, cy, k1, k2, k3, k4, k5, k6, t1, t2, hfov, H, W = params
-    if camera_name == "Pinhole":
-        params = [fx, fy, cx, cy]
-    elif camera_name == "Fisheye624":
-        params = [fx, fy, cx, cy, k1, k2, k3, k4, k5, k6, t1, t2]
-    elif camera_name == "OPENCV":
-        params = [fx, fy, cx, cy, k1, k2, k3, k4, k5, k6, t1, t2]
-    elif camera_name == "Equirectangular":
-        # dummy intrinsics for spherical camera, assume hfov -> vfov based on input shapes
-        hfov2 = hfov * torch.pi / 180.0 / 2
-        params = [fx, fy, cx, cy, W, H, hfov2, H / W * hfov2]
-        camera_name = "Spherical"
-
-    return eval(camera_name)(params=torch.tensor(params).float()).to(device)
-
-
-def instantiate_camera_1(args):
-    
-    camera = None
-    camera_path = args.camera_path
-    
-    if camera_path is not None:
-        with open(camera_path, "r") as f:
-            camera_dict = json.load(f)
-
-        params = torch.tensor(camera_dict["params"])
-        name = camera_dict["name"]
-        assert name in ["Fisheye624", "Spherical", "OPENCV", "Pinhole", "MEI"]
-        camera = eval(name)(params=params)
-    return camera
 
 def main():
     
@@ -135,16 +88,7 @@ def main():
     args = p.parse_args()
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-    params=[]
-    camera = instantiate_camera_1(args)
-
-    cfg = json.load(open(args.config_file, "r"))
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
     model = UniK3D.from_pretrained("lpiccinelli/unik3d-vitl") # vitl for ViT-L backbone
-
-    #model = load_model_from_pretrained_1(cfg)
     model = model.to(device)
     model.eval()
     model.resolution_level=1
@@ -166,11 +110,8 @@ def main():
         arr = np.array(img)
         tensor = torch.from_numpy(arr).permute(2, 0, 1).to(device)
 
-        #with torch.no_grad():
-        #preds = model.infer(tensor, camera=camera, normalize=True, rays=None)
         preds = model.infer(tensor, camera=None, normalize=True, rays=None)
         
-
         print("Predictions keys:", preds.keys())
 
         depth = preds.get("depth", None)
