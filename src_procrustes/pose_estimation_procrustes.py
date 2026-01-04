@@ -187,8 +187,8 @@ if __name__ == "__main__":
         help="Unik3D .npy point cloud 2",
     )
 
-    parser.add_argument("--mkpts1", type=str, required=True, help="1")
-    parser.add_argument("--mkpts2", type=str, required=True, help="2")
+    parser.add_argument("--mkpts1", type=str, required=True)
+    parser.add_argument("--mkpts2", type=str, required=True)
 
     parser.add_argument("--distance_threshold", type=float)
     parser.add_argument(

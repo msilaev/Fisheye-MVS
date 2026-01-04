@@ -2,45 +2,19 @@
 set -e
 set -x
 
-if [ -f ".env" ]; then
-    source .env
-fi
+source .env
 
 # Required env vars:
 #   REMOTE_USER
 #   REMOTE_HOST
 
-if [ -z "$REMOTE_USER" ] || [ -z "$REMOTE_HOST" ]; then
-    echo "ERROR: REMOTE_USER or REMOTE_HOST not defined (set in .env)"
-    exit 1
-fi
-
 source path_config.sh
-source experiment_config_kitti.sh
-
-REMOTE_DIR_ROOT="/home/hdd/mikhail/GAUSSIAN-SPLATTING/experiments"
-REMOTE_SUPER_GLUE_DIR="/home/hdd/mikhail/GAUSSIAN-SPLATTING/SuperGluePretrainedNetwork"
-REMOTE_UNIK3D_DIR="/home/hdd/mikhail/GAUSSIAN-SPLATTING/MVF-UniK3D"
-LOCAL_ROOT="/worktmp/THESES/GAUSSIAN-SPLATTING/"
+source experiment_config_adt.sh
 
 REMOTE_FISHEYE_MASK_DIR="${REMOTE_DIR_ROOT}/fisheye_masks"
+remote_fisheye_mask_path="${REMOTE_FISHEYE_MASK_DIR}/${FISHEYE_MASK_FILE}"
 
-
-DISTANCE_THRESHOLD=20
-EXPERIMENT_NAME="KITTI-360"
-IMAGE_DIR="IMAGES_DIR_experiment_1"
-remote_fisheye_mask_path="${REMOTE_FISHEYE_MASK_DIR}/MaskKitti360.png"
-SIZE_X=1400
-SIZE_Y=1400
-
-#DISTANCE_THRESHOLD=1000
-#EXPERIMENT_NAME="ADT"
-#IMAGE_DIR="IMAGES_DIR_experiment_1"
-#remote_fisheye_mask_path="${REMOTE_FISHEYE_MASK_DIR}/MaskADT_rot.png"
-#SIZE_X=1408
-#SIZE_Y=1408
-
-REMOTE_LOG_DIR="${REMOTE_DIR_ROOT}/${EXPERIMENT_NAME}/log_metrics"
+REMOTE_LOG_DIR="${REMOTE_DIR_ROOT}/${EXPERIMENT_NAME}/log_procrustes"
 REMOTE_RESULTS_DIR="${REMOTE_DIR_ROOT}/${EXPERIMENT_NAME}/results"
 remote_transform_result_path="${REMOTE_RESULTS_DIR}/transform_result.json"
 
