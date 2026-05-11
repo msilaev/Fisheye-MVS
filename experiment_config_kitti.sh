@@ -1,8 +1,13 @@
 DISTANCE_THRESHOLD_PLT=50
 DISTANCE_THRESHOLD=20
 EXPERIMENT_NAME="KITTI-360"
-IMAGE_DIR="IMAGES_DIR_experiment_1"
+SEQUENCE_NAME="2013_05_28_drive_0000_sync"   # change to target sequence
+IMAGE_DIR="test_pairs/pair_rot_10-20"         # updated by select_pairs_local.sh
 SIZE_X=1400
 SIZE_Y=1400
 IMG_EXTENSION="png"
 FISHEYE_MASK_FILE="MaskKitti360.png"
+ROTATION_BINS="0 10 20 30 40 50"  # degrees
+TRANSLATION_BINS="0 5 10 20 50"   # metres (driving scale)
+CALIB_TYPE="kitti360"
+KITTI_CALIB_FILE="calibration/image_02.yaml"  # relative to KITTI_ROOT

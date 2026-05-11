@@ -15,7 +15,7 @@ SIZE_Y="$9"
 image_pair_file="${REMOTE_IMAGE_DIR}/image_pairs.txt"
 image_input_dir="${REMOTE_IMAGE_DIR}"
 
-CONDA_SETUP="/home/mikhail/miniconda3/etc/profile.d/conda.sh"
+CONDA_SETUP="/home/<remote-user>/miniconda3/etc/profile.d/conda.sh"
 if [ -f "$CONDA_SETUP" ]; then
     source "$CONDA_SETUP"
 else

@@ -1,0 +1,7 @@
+#!/bin/bash
+cd /scratch/work/<remote-user>/3d/Fisheye-MVS
+bash ./src_eval/run_custom_pairs_pipeline_adt.sh \
+  'frames:Apartment_release_clean_seq136_M1292_frame000900|Apartment_release_clean_seq136_M1292_frame000840' \
+  'frames:Apartment_release_clean_seq136_M1292_frame002563|Apartment_release_clean_seq136_M1292_frame002537' \
+  'frames:Apartment_release_decoration_seq136_M1292_frame002000|Apartment_release_decoration_seq136_M1292_frame001965' \
+  'frames:Apartment_release_multiuser_cook_seq141_M1292_frame002033|Apartment_release_multiuser_cook_seq141_M1292_frame002090'

@@ -1,8 +1,13 @@
 DISTANCE_THRESHOLD_PLT=1000
 DISTANCE_THRESHOLD=1000
-EXPERIMENT_NAME="ADT"
-IMAGE_DIR="IMAGES_DIR_experiment_1"
+EXPERIMENT_NAME="ADT_seq133"
+SEQUENCE_NAME="Apartment_release_clean_seq133_M1292"  # change to target sequence
+IMAGE_DIR="test_pairs/pair_rot_10-20"                 # updated by select_pairs_local.sh
 SIZE_X=1408
 SIZE_Y=1408
 IMG_EXTENSION="jpg"
 FISHEYE_MASK_FILE="MaskADT_rot.png"
+ROTATION_BINS="0 10 20 30 40 50"        # degrees
+TRANSLATION_BINS="0.0 0.5 1.0 1.5 2.0" # metres
+CALIB_TYPE="aria"
+KITTI_CALIB_FILE=""

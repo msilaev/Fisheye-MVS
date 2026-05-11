@@ -11,40 +11,47 @@ source .env
 source path_config.sh
 source experiment_config_adt.sh
 
-REMOTE_FISHEYE_MASK_DIR="${REMOTE_DIR_ROOT}/fisheye_masks"
-remote_fisheye_mask_path="${REMOTE_FISHEYE_MASK_DIR}/${FISHEYE_MASK_FILE}"
+# ── Remote paths ──────────────────────────────────────────────────────────────
 
-REMOTE_LOG_DIR="${REMOTE_DIR_ROOT}/${EXPERIMENT_NAME}/log_procrustes"
-REMOTE_RESULTS_DIR="${REMOTE_DIR_ROOT}/${EXPERIMENT_NAME}/results"
+# Script dirs: point directly at the project clone on remote
+REMOTE_SCRIPT_DIR="${REMOTE_PROJECT_DIR}"
+REMOTE_SCRIPT_DIR_unik3d="${REMOTE_PROJECT_DIR}/src_unik3d"
+REMOTE_SCRIPT_DIR_superglue="${REMOTE_PROJECT_DIR}/src_superglue"
+REMOTE_SCRIPT_DIR_procrustes="${REMOTE_PROJECT_DIR}/src_procrustes"
+
+# Experiment data dirs (images, results, logs) — outside the project clone
+REMOTE_IMAGE_DIR="${REMOTE_EXPERIMENTS_DIR}/${EXPERIMENT_NAME}/${IMAGE_DIR}"
+REMOTE_RESULTS_DIR="${REMOTE_EXPERIMENTS_DIR}/${EXPERIMENT_NAME}/results"
+REMOTE_LOG_DIR="${REMOTE_EXPERIMENTS_DIR}/${EXPERIMENT_NAME}/logs"
+
+REMOTE_FISHEYE_MASK_DIR="${REMOTE_PROJECT_DIR}/assets/fisheye_masks"
+remote_fisheye_mask_path="${REMOTE_FISHEYE_MASK_DIR}/${FISHEYE_MASK_FILE}"
 remote_transform_result_path="${REMOTE_RESULTS_DIR}/transform_result.json"
 
-REMOTE_IMAGE_DIR="${REMOTE_DIR_ROOT}/${EXPERIMENT_NAME}/${IMAGE_DIR}"
-REMOTE_SCRIPT_DIR="${REMOTE_DIR_ROOT}/src_remote"
-REMOTE_SCRIPT_DIR_unik3d="${REMOTE_DIR_ROOT}/src_remote"
-REMOTE_SCRIPT_DIR_superglue="${REMOTE_DIR_ROOT}/src_remote"
-REMOTE_SCRIPT_DIR_procrustes="${REMOTE_DIR_ROOT}/src_remote"
+# ── Local paths ───────────────────────────────────────────────────────────────
 
+LOCAL_SCRIPT_DIR="${LOCAL_ROOT}/Fisheye-MVS"
+LOCAL_SCRIPT_DIR_unik3d="${LOCAL_SCRIPT_DIR}/src_unik3d"
+LOCAL_SCRIPT_DIR_superglue="${LOCAL_SCRIPT_DIR}/src_superglue"
+LOCAL_SCRIPT_DIR_procrustes="${LOCAL_SCRIPT_DIR}/src_procrustes"
 
-LOCAL_SCRIPT_DIR="${LOCAL_ROOT}/Fisheye-MVS/"
-LOCAL_SCRIPT_DIR_unik3d="${LOCAL_ROOT}/Fisheye-MVS/src_unik3d/"
-LOCAL_SCRIPT_DIR_superglue="${LOCAL_ROOT}/Fisheye-MVS/src_superglue/"
-LOCAL_SCRIPT_DIR_procrustes="${LOCAL_ROOT}/Fisheye-MVS/src_procrustes/"
-
+# Source images on local machine:
+#   ${LOCAL_ROOT}/experiments/${EXPERIMENT_NAME}/${IMAGE_DIR}/
+#   Place image0.jpg and image1.jpg there, along with image_pairs.txt
 LOCAL_IMAGE_DIR="${LOCAL_ROOT}/experiments/${EXPERIMENT_NAME}/${IMAGE_DIR}"
-
-REMOTE_FISHEYE_MASK_DIR="${REMOTE_DIR_ROOT}/fisheye_masks"
 LOCAL_FISHEYE_MASK_DIR="${LOCAL_SCRIPT_DIR}/assets/fisheye_masks"
+
+# ── Create remote dirs ────────────────────────────────────────────────────────
 
 ssh "$REMOTE_USER@$REMOTE_HOST" "
     mkdir -p \
         '$REMOTE_LOG_DIR' \
-        '$REMOTE_SCRIPT_DIR_unik3d' \
-        '$REMOTE_SCRIPT_DIR_superglue' \
-        '$REMOTE_SCRIPT_DIR_procrustes' \
-        '$REMOTE_IMAGE_DIR' \
         '$REMOTE_RESULTS_DIR' \
+        '$REMOTE_IMAGE_DIR' \
         '$REMOTE_FISHEYE_MASK_DIR'
 "
+
+# ── Sync scripts and assets ───────────────────────────────────────────────────
 
 rsync -avz "$LOCAL_FISHEYE_MASK_DIR/" \
     "$REMOTE_USER@$REMOTE_HOST:$REMOTE_FISHEYE_MASK_DIR/"
@@ -61,8 +68,16 @@ rsync -avz "$LOCAL_SCRIPT_DIR_procrustes/" \
 rsync -avz "$LOCAL_SCRIPT_DIR/run_pipeline_remote.sh" \
     "$REMOTE_USER@$REMOTE_HOST:$REMOTE_SCRIPT_DIR/run_pipeline_remote.sh"
 
+# ── Sync source images ────────────────────────────────────────────────────────
+# Expected contents of LOCAL_IMAGE_DIR:
+#   image0.jpg / image0.png   — first camera image
+#   image1.jpg / image1.png   — second camera image
+#   image_pairs.txt           — one line: "image0.jpg image1.jpg"
+
 rsync -avz "$LOCAL_IMAGE_DIR/" \
     "$REMOTE_USER@$REMOTE_HOST:$REMOTE_IMAGE_DIR/"
+
+# ── Launch pipeline on remote (non-blocking) ──────────────────────────────────
 
 ssh "$REMOTE_USER@$REMOTE_HOST" \
   "nohup bash '$REMOTE_SCRIPT_DIR/run_pipeline_remote.sh' \
@@ -82,3 +97,4 @@ ssh "$REMOTE_USER@$REMOTE_HOST" \
   > '$REMOTE_LOG_DIR/run_pipeline_remote.log' 2>&1 &"
 
 echo "[LOCAL] Pipeline started on remote host."
+echo "[LOCAL] Logs: ${REMOTE_LOG_DIR}/run_pipeline_remote.log"

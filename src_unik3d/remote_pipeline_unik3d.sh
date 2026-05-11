@@ -11,7 +11,7 @@ REMOTE_RESULTS_DIR="$6"
 REMOTE_UNIK3D_DIR="${7}"
 
 CONFIG="${REMOTE_UNIK3D_DIR}/configs/train/vitb.json"
-CONDA_SETUP="/home/mikhail/miniconda3/etc/profile.d/conda.sh"
+CONDA_SETUP="/home/<remote-user>/miniconda3/etc/profile.d/conda.sh"
 if [ -f "$CONDA_SETUP" ]; then
     source "$CONDA_SETUP"
 else

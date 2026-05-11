@@ -4,6 +4,7 @@ import json
 import numpy as np
 from PIL import Image
 from scipy.linalg import orthogonal_procrustes
+from procrustes_ransac import ransac_sim3
 
 
 
@@ -132,19 +133,22 @@ def pose_est(args):
     P1_filtered = filter_mkpts(args, args.point1, mkpts1)
     P2_filtered = filter_mkpts(args, args.point2, mkpts2)
 
-    distances_P = []
-    for p in P1_filtered:
-        distances_P.append(np.linalg.norm(p))
-    distances_P = np.array(distances_P)
-
+    distances_P = np.array([np.linalg.norm(p) for p in P1_filtered])
     P1_filtered = P1_filtered[distances_P < args.distance_threshold]
     P2_filtered = P2_filtered[distances_P < args.distance_threshold]
 
-    (mu1, norm1, mtx1), (mu2, norm2, mtx2), scale, R, _ = procrustes(
-        P1_filtered,
-        P2_filtered,
-    )
-    t = scale * np.dot(-mu1, R.T) + mu2
+    if args.use_ransac:
+        scale, R, t, _ = ransac_sim3(
+            P1_filtered, P2_filtered,
+            n_iter=args.ransac_n_iter,
+            inlier_thresh=args.ransac_inlier_thresh,
+        )
+    else:
+        (mu1, norm1, mtx1), (mu2, norm2, mtx2), scale, R, _ = procrustes(
+            P1_filtered,
+            P2_filtered,
+        )
+        t = scale * np.dot(-mu1, R.T) + mu2
 
     return R, t, scale
 
@@ -203,6 +207,11 @@ if __name__ == "__main__":
     )
     parser.add_argument("--size_x", type=int, required=True)
     parser.add_argument("--size_y", type=int, required=True)
+    parser.add_argument("--use-ransac", action="store_true",
+                        help="Use RANSAC Sim(3) instead of plain Procrustes")
+    parser.add_argument("--ransac-n-iter", type=int, default=1000)
+    parser.add_argument("--ransac-inlier-thresh", type=float, default=0.5,
+                        help="Per-point residual threshold (same units as 3D points)")
 
     main(parser.parse_args())
 

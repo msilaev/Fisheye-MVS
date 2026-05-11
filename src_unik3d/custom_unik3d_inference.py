@@ -91,7 +91,7 @@ def main():
     model = UniK3D.from_pretrained("lpiccinelli/unik3d-vitl") # vitl for ViT-L backbone
     model = model.to(device)
     model.eval()
-    model.resolution_level=1
+    model.resolution_level=9
 
     os.makedirs(args.output_dir, exist_ok=True)
     os.makedirs(args.images_output_dir, exist_ok=True)

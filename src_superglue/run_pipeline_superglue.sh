@@ -20,7 +20,7 @@ fi
 # ------------------------------
 # 2. Remote configuration
 # ------------------------------
-REMOTE_DIR="/home/hdd/mikhail/GAUSSIAN-SPLATTING/experiments"
+REMOTE_DIR="/home/<remote-user>/GAUSSIAN-SPLATTING/experiments"
 REMOTE_LOG_DIR="${REMOTE_DIR}/log_madpose"
 REMOTE_RESULTS_DIR="${REMOTE_DIR}/result_madpose"
 REMOTE_SCRIPT_DIR="${REMOTE_DIR}/script_superglue"

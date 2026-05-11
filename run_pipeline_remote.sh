@@ -16,7 +16,7 @@ DISTANCE_THRESHOLD="${11}"
 SIZE_X="${12}"
 SIZE_Y="${13}"
 
-CONDA_SETUP="/home/mikhail/miniconda3/etc/profile.d/conda.sh"
+CONDA_SETUP="/home/<remote-user>/miniconda3/etc/profile.d/conda.sh"
 
 if [ -f "$CONDA_SETUP" ]; then
     source "$CONDA_SETUP"

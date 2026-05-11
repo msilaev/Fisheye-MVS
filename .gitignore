@@ -212,3 +212,11 @@ __pycache__/*
 ORBvoc.txt
 exp.sh
 launch.json
+
+# Airflow keys, env and logs (do NOT commit secrets)
+/airflow/keys/
+/airflow/.env
+/airflow/logs/
+
+# Claude Code memory
+.claude/
