@@ -62,7 +62,7 @@ Put corresponding REMOTE_USER and REMOTE_HOST in the .env file (see example in .
 
 ```bash
 cd $LOCAL_ROOT
-git clone https://anonymous.4open.science/r/Fisheye-MVS-XXXX
+git clone https://anonymous.4open.science/r/Fisheye-MVS-86EB/
 cd Fisheye-MVS
 conda create -n 3d_pose_env python=3.8
 conda activate 3d_pose_env
